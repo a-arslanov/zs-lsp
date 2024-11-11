@@ -182,7 +182,6 @@ export class ZSHoverProvider {
       const type = this.lsp.contextManager.getDeclarationType(
         declaration.declaration
       );
-      console.log(111111111111111111, declaration.declaration?.text)
       const hover: Hover = {
         contents: [
           `\`\`\`javascript\n(method) ${

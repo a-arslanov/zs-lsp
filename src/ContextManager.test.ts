@@ -6,7 +6,7 @@ import { ContextManager } from "./ContextManager";
 import fs from "fs";
 import { LSP } from "./LSP";
 
-const lsp = new LSP("", "");
+const lsp = new LSP();
 
 const parser = new Parser();
 parser.setLanguage(ZSLanguage);
