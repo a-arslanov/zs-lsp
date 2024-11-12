@@ -8,7 +8,9 @@ import path from "path";
 import { ZSSemanticTokenProvider } from "./SemanticTokenProvider";
 import { ZSDiagnosticProvider } from "./DiagnosticProvider";
 import { ZSCompletitionProvider } from "./CompletitionProvider";
+import url from "url";
 
+const isWin = process.platform === "win32"
 export class LSP {
   private parser: Parser;
   public cache: Map<
@@ -60,8 +62,8 @@ export class LSP {
   }
 
   public setCache(uri: string, content: string) {
-    const filePath = uri.replace("file://", "");
-    this.cache.set(uri.replace("file://", ""), {
+    const filePath = uri?.startsWith('file://') ? url.fileURLToPath(uri) : uri;
+    this.cache.set(filePath, {
       text: content,
       node: this.parse(this.contextManager.preprocess(content)).rootNode,
       filePath,
@@ -69,7 +71,7 @@ export class LSP {
   }
 
   public getCache(uri: string) {
-    const filePath = uri.replace("file://", "");
+    const filePath = uri?.startsWith('file://') ? url.fileURLToPath(uri) : uri;
     if (!this.cache.has(filePath)) {
       const file = fs.readFileSync(filePath, "utf-8");
       this.setCache(uri, file);
@@ -81,7 +83,7 @@ export class LSP {
     entryFile: string,
     cb: (filePath: string) => unknown
   ): T {
-    const stack = [entryFile, LSP.includes[0] + "/system.zi"];
+    const stack = [entryFile, path.resolve(LSP.includes[0], "system.zi")];
     const visited = new Set();
 
     while (stack.length > 0) {
@@ -121,7 +123,8 @@ export class LSP {
       .filter(Boolean) as string[];
   }
 
-  public resolvePath(callerPath: string, importName: string) {
+  public resolvePath(callerPath: string, rawImportName: string) {
+    const importName = isWin ? rawImportName.replaceAll('/', '\\') : rawImportName;
     const name = path.basename(importName);
     const dir = path.dirname(callerPath);
     const namePrefix = importName.replace(name, "");
