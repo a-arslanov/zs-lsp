@@ -1,5 +1,6 @@
 import { Declaration, DeclarationParams } from "vscode-languageserver";
 import { LSP } from "./LSP";
+import url from "url";
 
 export class ZSDeclarationProvider {
   private lsp: LSP;
@@ -25,7 +26,7 @@ export class ZSDeclarationProvider {
     }
 
     const result: Declaration = {
-      uri: declaration.filePath,
+      uri: url.pathToFileURL(declaration.filePath).href,
       range: {
         start: {
           line: declaration.declaration.startPosition.row,

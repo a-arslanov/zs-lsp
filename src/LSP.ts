@@ -21,6 +21,7 @@ export class LSP {
   public declarationProvider: ZSDeclarationProvider;
   public hoverProvider: ZSHoverProvider;
   public diagnosticProvider: ZSDiagnosticProvider;
+  public completitionProvider: ZSCompletitionProvider;
 
   static root: string;
   static includes: string[] = [];
@@ -30,6 +31,7 @@ export class LSP {
     this.declarationProvider = new ZSDeclarationProvider(this);
     this.hoverProvider = new ZSHoverProvider(this);
     this.diagnosticProvider = new ZSDiagnosticProvider(this);
+    this.completitionProvider = new ZSCompletitionProvider(this);
   }
 
   public async init() {
@@ -51,13 +53,6 @@ export class LSP {
     const semanticTokenProvider = new ZSSemanticTokenProvider(this);
     return semanticTokenProvider.provideDocumentSemanticTokens.bind(
       semanticTokenProvider
-    );
-  }
-
-  public initCompletitionProvider() {
-    const completitionProvider = new ZSCompletitionProvider(this);
-    return completitionProvider.provideCompletionItems.bind(
-      completitionProvider
     );
   }
 
